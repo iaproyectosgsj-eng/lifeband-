@@ -4,6 +4,7 @@ import { AuthStackParamList } from '../types';
 import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterStep1Screen from '../screens/auth/RegisterStep1Screen';
 import RegisterStep2Screen from '../screens/auth/RegisterStep2Screen';
+import { Colors } from '../constants';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
@@ -14,7 +15,7 @@ const AuthStack = () => {
       screenOptions={{
         headerShown: false,
         contentStyle: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: Colors.bg,
         },
       }}
     >
