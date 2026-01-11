@@ -3,12 +3,12 @@ import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
   Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  SafeAreaView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -67,81 +67,87 @@ const LoginScreen: React.FC = () => {
   };
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={styles.header}>
-          <Text style={styles.title}>Lifeband</Text>
-          <Text style={styles.subtitle}>Gestión de pulseras inteligentes</Text>
-        </View>
-
-        <View style={styles.form}>
-          <Input
-            label="Email"
-            value={formData.email}
-            onChangeText={(value) => updateFormData('email', value)}
-            placeholder="tu@email.com"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-
-          <Input
-            label="Contraseña"
-            value={formData.password}
-            onChangeText={(value) => updateFormData('password', value)}
-            placeholder="Tu contraseña"
-            secureTextEntry
-          />
-
-          <TouchableOpacity
-            style={styles.forgotPassword}
-            onPress={() => Alert.alert('Funcionalidad por implementar')}
-          >
-            <Text style={styles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
-          </TouchableOpacity>
-
-          <Button
-            title="Iniciar Sesión"
-            onPress={handleLogin}
-            loading={loading}
-            style={styles.loginButton}
-          />
-
-          <View style={styles.divider}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>O</Text>
-            <View style={styles.dividerLine} />
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.hero}>
+            <Text style={styles.title}>Bienvenido a Lifeband</Text>
+            <Text style={styles.subtitle}>
+              Administra pulseras médicas con información crítica siempre disponible.
+            </Text>
           </View>
 
-          <Button
-            title="Continuar con Google"
-            onPress={handleGoogleLogin}
-            variant="outline"
-            style={styles.googleButton}
-          />
-        </View>
+          <View style={styles.card}>
+            <Input
+              label="Email"
+              value={formData.email}
+              onChangeText={(value) => updateFormData('email', value)}
+              placeholder="tu@email.com"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
 
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>¿No tienes cuenta?</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('RegisterStep1')}
-          >
-            <Text style={styles.signUpText}>Regístrate</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+            <Input
+              label="Contraseña"
+              value={formData.password}
+              onChangeText={(value) => updateFormData('password', value)}
+              placeholder="Tu contraseña"
+              secureTextEntry
+            />
+
+            <TouchableOpacity
+              style={styles.forgotPassword}
+              onPress={() => Alert.alert('Funcionalidad por implementar')}
+            >
+              <Text style={styles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
+            </TouchableOpacity>
+
+            <Button
+              title="Iniciar Sesión"
+              onPress={handleLogin}
+              loading={loading}
+              style={styles.loginButton}
+            />
+
+            <View style={styles.divider}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>O</Text>
+              <View style={styles.dividerLine} />
+            </View>
+
+            <Button
+              title="Continuar con Google"
+              onPress={handleGoogleLogin}
+              variant="outline"
+              style={styles.googleButton}
+            />
+          </View>
+
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>¿No tienes cuenta?</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('RegisterStep1')}>
+              <Text style={styles.signUpText}>Regístrate</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
   container: {
     flex: 1,
     backgroundColor: Colors.background,
@@ -151,24 +157,33 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
     padding: Spacing.lg,
+    paddingBottom: Spacing.xxl,
   },
-  header: {
-    alignItems: 'center',
+  hero: {
+    marginTop: Spacing.lg,
     marginBottom: Spacing.xl,
+    gap: Spacing.sm,
   },
   title: {
-    ...Typography.title,
-    color: Colors.primary,
-    marginBottom: Spacing.sm,
+    ...Typography.heading,
+    color: Colors.text,
   },
   subtitle: {
     ...Typography.body,
     color: Colors.textSecondary,
   },
-  form: {
-    marginBottom: Spacing.xl,
+  card: {
+    backgroundColor: Colors.card,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 4,
   },
   forgotPassword: {
     alignSelf: 'flex-end',
@@ -197,17 +212,18 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.md,
   },
   googleButton: {
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.md,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: Spacing.xl,
+    gap: Spacing.xs,
   },
   footerText: {
     ...Typography.body,
     color: Colors.textSecondary,
-    marginRight: Spacing.xs,
   },
   signUpText: {
     ...Typography.body,

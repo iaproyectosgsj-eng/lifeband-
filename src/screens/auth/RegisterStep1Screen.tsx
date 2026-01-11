@@ -3,12 +3,12 @@ import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
   Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  SafeAreaView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -48,65 +48,71 @@ const RegisterStep1Screen: React.FC = () => {
   };
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={styles.header}>
-          <Text style={styles.title}>Crear Cuenta</Text>
-          <Text style={styles.subtitle}>Paso 1 de 2</Text>
-        </View>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.header}>
+            <Text style={styles.title}>Crear cuenta</Text>
+            <Text style={styles.subtitle}>Paso 1 de 2 • Información básica</Text>
+          </View>
 
-        <View style={styles.form}>
-          <Input
-            label="Nombre"
-            value={formData.firstName}
-            onChangeText={(value) => updateFormData('firstName', value)}
-            placeholder="Tu nombre"
-            autoCapitalize="words"
-          />
+          <View style={styles.card}>
+            <Input
+              label="Nombre"
+              value={formData.firstName}
+              onChangeText={(value) => updateFormData('firstName', value)}
+              placeholder="Tu nombre"
+              autoCapitalize="words"
+            />
 
-          <Input
-            label="Apellido"
-            value={formData.lastName}
-            onChangeText={(value) => updateFormData('lastName', value)}
-            placeholder="Tu apellido"
-            autoCapitalize="words"
-          />
+            <Input
+              label="Apellido"
+              value={formData.lastName}
+              onChangeText={(value) => updateFormData('lastName', value)}
+              placeholder="Tu apellido"
+              autoCapitalize="words"
+            />
 
-          <Input
-            label="Email"
-            value={formData.email}
-            onChangeText={(value) => updateFormData('email', value)}
-            placeholder="tu@email.com"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
+            <Input
+              label="Email"
+              value={formData.email}
+              onChangeText={(value) => updateFormData('email', value)}
+              placeholder="tu@email.com"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
 
-          <Button
-            title="Continuar"
-            onPress={handleContinue}
-            style={styles.continueButton}
-          />
-        </View>
+            <Button
+              title="Continuar"
+              onPress={handleContinue}
+              style={styles.continueButton}
+            />
+          </View>
 
-        <View style={styles.footer}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.backText}>← Volver al Login</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+          <View style={styles.footer}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Text style={styles.backText}>← Volver al Login</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
   container: {
     flex: 1,
     backgroundColor: Colors.background,
@@ -116,24 +122,33 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
     padding: Spacing.lg,
+    paddingBottom: Spacing.xxl,
   },
   header: {
-    alignItems: 'center',
+    marginTop: Spacing.lg,
     marginBottom: Spacing.xl,
+    gap: Spacing.xs,
   },
   title: {
-    ...Typography.title,
-    color: Colors.primary,
-    marginBottom: Spacing.sm,
+    ...Typography.heading,
+    color: Colors.text,
   },
   subtitle: {
     ...Typography.body,
     color: Colors.textSecondary,
   },
-  form: {
-    marginBottom: Spacing.xl,
+  card: {
+    backgroundColor: Colors.card,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 4,
   },
   continueButton: {
     marginBottom: Spacing.lg,
