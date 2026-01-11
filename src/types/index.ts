@@ -113,6 +113,43 @@ export interface CrisisSensibilidad {
   updated_at: string;
 }
 
+export interface HistorialQuirurgico {
+  id: string;
+  infomedica_id: string;
+  description: string;
+  date: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ContactoMedico {
+  id: string;
+  infomedica_id: string;
+  full_name: string;
+  specialty: string;
+  phone: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AntecedentesMedicos {
+  id: string;
+  infomedica_id: string;
+  record: string;
+  date: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DispositivosImplantados {
+  id: string;
+  infomedica_id: string;
+  device: string;
+  implanted_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface SubscriptionPortador {
   id: string;
   admin_id: string;
@@ -143,6 +180,7 @@ export interface AuthStackParamList {
   Login: undefined;
   RegisterStep1: undefined;
   RegisterStep2: { email: string };
+  [key: string]: any;
 }
 
 export interface AppStackParamList {
@@ -152,4 +190,5 @@ export interface AppStackParamList {
   EditPortadorWizard: { portadorId: string };
   Subscription: { portadorId: string };
   Settings: undefined;
+  [key: string]: any;
 }
