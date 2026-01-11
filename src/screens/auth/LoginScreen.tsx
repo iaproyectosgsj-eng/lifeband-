@@ -19,6 +19,7 @@ import { Button, Input } from '../../components/common';
 
 type LoginNavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Login'>;
 
+// Login screen for admin users.
 const LoginScreen: React.FC = () => {
   const navigation = useNavigation<LoginNavigationProp>();
   const [formData, setFormData] = useState({
@@ -27,6 +28,7 @@ const LoginScreen: React.FC = () => {
   });
   const [loading, setLoading] = useState(false);
 
+  // Email/password sign-in.
   const handleLogin = async () => {
     if (!formData.email || !formData.password) {
       Alert.alert('Error', 'Por favor completa todos los campos');
@@ -47,6 +49,7 @@ const LoginScreen: React.FC = () => {
     }
   };
 
+  // Google OAuth sign-in (handled by Supabase).
   const handleGoogleLogin = async () => {
     setLoading(true);
     try {
@@ -62,6 +65,7 @@ const LoginScreen: React.FC = () => {
     }
   };
 
+  // Update local form state.
   const updateFormData = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };

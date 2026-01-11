@@ -1,3 +1,4 @@
+// Admin profile stored in Supabase `admins`.
 export interface Admin {
   id: string;
   first_name: string;
@@ -15,6 +16,7 @@ export interface Admin {
   updated_at: string;
 }
 
+// Portador (wearer) managed by the admin.
 export interface Portador {
   id: string;
   admin_id: string;
@@ -36,6 +38,7 @@ export interface Portador {
   updated_at: string;
 }
 
+// Medical info header (1:1 with portador).
 export interface InfoMedica {
   id: string;
   portador_id: string;
@@ -46,6 +49,7 @@ export interface InfoMedica {
   updated_at: string;
 }
 
+// Allergy item (1:N with info_medica).
 export interface Alergia {
   id: string;
   infomedica_id: string;
@@ -55,6 +59,7 @@ export interface Alergia {
   updated_at: string;
 }
 
+// Medical condition item (1:N with info_medica).
 export interface CondicionMedica {
   id: string;
   infomedica_id: string;
@@ -64,6 +69,7 @@ export interface CondicionMedica {
   updated_at: string;
 }
 
+// Long-term medication item (1:N with info_medica).
 export interface MedicamentoPermanente {
   id: string;
   infomedica_id: string;
@@ -74,6 +80,7 @@ export interface MedicamentoPermanente {
   updated_at: string;
 }
 
+// Emergency contact (1:N with portador).
 export interface ContactoEmergencia {
   id: string;
   portador_id: string;
@@ -85,6 +92,7 @@ export interface ContactoEmergencia {
   updated_at: string;
 }
 
+// Emotional support contact (1:N with info_medica).
 export interface ApoyoEmocional {
   id: string;
   infomedica_id: string;
@@ -95,6 +103,7 @@ export interface ApoyoEmocional {
   updated_at: string;
 }
 
+// Psychological condition item (1:N with info_medica).
 export interface CondicionPsicologica {
   id: string;
   infomedica_id: string;
@@ -103,6 +112,7 @@ export interface CondicionPsicologica {
   updated_at: string;
 }
 
+// Crisis trigger/sensitivity item (1:N with info_medica).
 export interface CrisisSensibilidad {
   id: string;
   infomedica_id: string;
@@ -113,6 +123,7 @@ export interface CrisisSensibilidad {
   updated_at: string;
 }
 
+// Surgical history item (1:N with info_medica).
 export interface HistorialQuirurgico {
   id: string;
   infomedica_id: string;
@@ -122,6 +133,7 @@ export interface HistorialQuirurgico {
   updated_at: string;
 }
 
+// Medical contact item (1:N with info_medica).
 export interface ContactoMedico {
   id: string;
   infomedica_id: string;
@@ -132,6 +144,7 @@ export interface ContactoMedico {
   updated_at: string;
 }
 
+// Medical record item (1:N with info_medica).
 export interface AntecedentesMedicos {
   id: string;
   infomedica_id: string;
@@ -141,6 +154,7 @@ export interface AntecedentesMedicos {
   updated_at: string;
 }
 
+// Implanted device item (1:N with info_medica).
 export interface DispositivosImplantados {
   id: string;
   infomedica_id: string;
@@ -150,6 +164,7 @@ export interface DispositivosImplantados {
   updated_at: string;
 }
 
+// Per-portador subscription.
 export interface SubscriptionPortador {
   id: string;
   admin_id: string;
@@ -165,17 +180,20 @@ export interface SubscriptionPortador {
   updated_at: string;
 }
 
+// Auth state used by AppNavigator.
 export interface AuthState {
   user: Admin | null;
   session: any | null;
   loading: boolean;
 }
 
+// Root navigator params.
 export interface RootStackParamList {
   AuthStack: undefined;
   AppStack: undefined;
 }
 
+// Auth stack route params.
 export interface AuthStackParamList {
   Login: undefined;
   RegisterStep1: undefined;
@@ -183,6 +201,7 @@ export interface AuthStackParamList {
   [key: string]: any;
 }
 
+// App stack route params.
 export interface AppStackParamList {
   Dashboard: undefined;
   PortadorDetail: { portadorId: string };

@@ -7,6 +7,7 @@ import { Admin, AuthState } from '../types';
 import AuthStack from './AuthStack';
 import AppStack from './AppStack';
 
+// Root stack defines whether the user sees auth or app routes.
 export type RootStackParamList = {
   AuthStack: undefined;
   AppStack: undefined;
@@ -14,6 +15,7 @@ export type RootStackParamList = {
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
+// AppNavigator watches auth state and routes accordingly.
 const AppNavigator: React.FC = () => {
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
@@ -22,6 +24,7 @@ const AppNavigator: React.FC = () => {
   });
 
   useEffect(() => {
+    // Load current session and ensure admin profile exists.
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
@@ -54,6 +57,7 @@ const AppNavigator: React.FC = () => {
 
     checkAuth();
 
+    // Subscribe to auth changes to keep navigation in sync.
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (session?.user) {

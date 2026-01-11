@@ -3,7 +3,9 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert, SafeAreaView } from 'r
 import { Colors, Spacing, Typography, BorderRadius } from '../../constants';
 import { signOut } from '../../services';
 
+// Settings screen with account and support options.
 const SettingsScreen: React.FC = () => {
+  // Sign out of the current session.
   const handleSignOut = () => {
     Alert.alert(
       'Cerrar Sesión',
@@ -26,6 +28,7 @@ const SettingsScreen: React.FC = () => {
     );
   };
 
+  // Placeholder for account deletion flow.
   const handleDeleteAccount = () => {
     Alert.alert(
       'Eliminar Cuenta',

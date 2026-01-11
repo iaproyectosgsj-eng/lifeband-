@@ -1,3 +1,4 @@
+// List of countries used in dropdown selectors.
 export const COUNTRIES = [
   'Afganistán',
   'Albania',

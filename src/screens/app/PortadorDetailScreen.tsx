@@ -19,6 +19,7 @@ import { getPortador, updatePortador } from '../../services';
 type PortadorDetailRouteProp = RouteProp<AppStackParamList, 'PortadorDetail'>;
 type PortadorDetailNavigationProp = NativeStackNavigationProp<AppStackParamList, 'PortadorDetail'>;
 
+// Detail screen for a single portador.
 const PortadorDetailScreen: React.FC = () => {
   const route = useRoute<PortadorDetailRouteProp>();
   const navigation = useNavigation<PortadorDetailNavigationProp>();
@@ -30,6 +31,7 @@ const PortadorDetailScreen: React.FC = () => {
     loadPortador();
   }, [portadorId]);
 
+  // Fetch portador data from storage.
   const loadPortador = async () => {
     try {
       const data = await getPortador(portadorId);
@@ -41,6 +43,7 @@ const PortadorDetailScreen: React.FC = () => {
     }
   };
 
+  // Map status to badge color.
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active': return Colors.success;
@@ -50,6 +53,7 @@ const PortadorDetailScreen: React.FC = () => {
     }
   };
 
+  // Map status to human-readable text.
   const getStatusText = (status: string) => {
     switch (status) {
       case 'active': return 'Activo';
@@ -59,6 +63,7 @@ const PortadorDetailScreen: React.FC = () => {
     }
   };
 
+  // Mark the wristband as lost.
   const handleMarkAsLost = () => {
     Alert.alert(
       'Marcar como Perdido',
@@ -84,6 +89,7 @@ const PortadorDetailScreen: React.FC = () => {
     );
   };
 
+  // Share the public emergency link.
   const handleShareLink = async () => {
     if (portador?.qr_token) {
       const publicUrl = `https://api.lifeband.app/p/${portador.qr_token}`;
@@ -98,6 +104,7 @@ const PortadorDetailScreen: React.FC = () => {
     }
   };
 
+  // Open or show the generated PDF link.
   const handleViewPDF = () => {
     if (portador?.public_pdf_url) {
       // TODO: Implement PDF viewer

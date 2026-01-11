@@ -10,6 +10,7 @@ import SettingsScreen from '../screens/app/SettingsScreen';
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
+// Stack for authenticated app screens.
 const AppStack = () => {
   return (
     <Stack.Navigator

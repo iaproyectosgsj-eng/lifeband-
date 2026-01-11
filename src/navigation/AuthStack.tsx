@@ -7,6 +7,7 @@ import RegisterStep2Screen from '../screens/auth/RegisterStep2Screen';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
+// Stack for authentication-related screens.
 const AuthStack = () => {
   return (
     <Stack.Navigator

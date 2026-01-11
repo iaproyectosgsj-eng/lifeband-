@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors, Spacing, Typography } from '../../constants';
 
+// Placeholder for editing an existing portador.
 const EditPortadorWizardScreen: React.FC = () => {
   return (
     <View style={styles.container}>

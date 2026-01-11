@@ -22,6 +22,7 @@ import { SearchableDropdown } from '../../components/common';
 type RegisterStep2RouteProp = RouteProp<AuthStackParamList, 'RegisterStep2'>;
 type RegisterStep2NavigationProp = NativeStackNavigationProp<AuthStackParamList, 'RegisterStep2'>;
 
+// Registration step 2: credentials, country/language, consents.
 const RegisterStep2Screen: React.FC = () => {
   const route = useRoute<RegisterStep2RouteProp>();
   const navigation = useNavigation<RegisterStep2NavigationProp>();
@@ -39,6 +40,7 @@ const RegisterStep2Screen: React.FC = () => {
 
   const [loading, setLoading] = useState(false);
 
+  // Validate inputs and create Supabase user + admin profile.
   const handleRegister = async () => {
     if (!formData.password || !formData.confirmPassword) {
       Alert.alert('Error', 'Por favor completa todos los campos');
@@ -114,6 +116,7 @@ const RegisterStep2Screen: React.FC = () => {
     }
   };
 
+  // Update local form state.
   const updateFormData = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };

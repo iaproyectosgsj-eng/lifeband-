@@ -18,6 +18,7 @@ import { Button, Input } from '../../components/common';
 
 type RegisterStep1NavigationProp = NativeStackNavigationProp<AuthStackParamList, 'RegisterStep1'>;
 
+// Registration step 1: capture basic identity.
 const RegisterStep1Screen: React.FC = () => {
   const navigation = useNavigation<RegisterStep1NavigationProp>();
   const [formData, setFormData] = useState({
@@ -26,10 +27,12 @@ const RegisterStep1Screen: React.FC = () => {
     lastName: '',
   });
 
+  // Update local form state.
   const updateFormData = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  // Validate and move to step 2.
   const handleContinue = () => {
     if (!formData.email || !formData.firstName || !formData.lastName) {
       Alert.alert('Error', 'Por favor completa todos los campos');

@@ -17,6 +17,7 @@ import { Button } from '../../components/common';
 
 type DashboardNavigationProp = NativeStackNavigationProp<AppStackParamList, 'Dashboard'>;
 
+// Dashboard listing all portadores for the current admin.
 const DashboardScreen: React.FC = () => {
   const navigation = useNavigation<DashboardNavigationProp>();
   const [portadores, setPortadores] = useState<Portador[]>([]);
@@ -34,6 +35,7 @@ const DashboardScreen: React.FC = () => {
     return unsubscribe;
   }, [navigation]);
 
+  // Load portadores from Supabase or local fallback.
   const loadPortadores = async () => {
     try {
       const adminId = await getCurrentAdminId();
@@ -48,6 +50,7 @@ const DashboardScreen: React.FC = () => {
     }
   };
 
+  // Map status to badge color.
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active': return Colors.success;
@@ -57,6 +60,7 @@ const DashboardScreen: React.FC = () => {
     }
   };
 
+  // Map status to human-readable text.
   const getStatusText = (status: string) => {
     switch (status) {
       case 'active': return 'Activo';
@@ -66,6 +70,7 @@ const DashboardScreen: React.FC = () => {
     }
   };
 
+  // Render a single portador card.
   const renderPortadorCard = ({ item }: { item: Portador }) => (
     <TouchableOpacity
       style={styles.card}
@@ -94,6 +99,7 @@ const DashboardScreen: React.FC = () => {
     </TouchableOpacity>
   );
 
+  // Header with title and settings shortcut.
   const renderHeader = () => (
     <View style={styles.header}>
       <View>

@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { Colors, Spacing, Typography, BorderRadius } from '../../constants';
 
+// Props for the Card container component.
 interface CardProps {
   children: React.ReactNode;
   style?: ViewStyle;
@@ -16,6 +17,7 @@ interface CardProps {
   shadow?: boolean;
 }
 
+// Card component that provides padding, borders, and optional shadow.
 const Card: React.FC<CardProps> = ({
   children,
   style,
@@ -23,6 +25,7 @@ const Card: React.FC<CardProps> = ({
   padding = 'medium',
   shadow = true,
 }) => {
+  // Compute card style based on padding and shadow preferences.
   const getCardStyle = (): ViewStyle => {
     const baseStyle: ViewStyle = {
       backgroundColor: Colors.card,

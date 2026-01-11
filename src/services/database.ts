@@ -18,14 +18,17 @@ import {
   ApoyoEmocional
 } from '../types';
 
+// Local storage keys used when Supabase is not configured.
 const LOCAL_ADMIN_ID_KEY = 'lifeband_local_admin_id';
 const LOCAL_ADMINS_KEY = 'lifeband_admins';
 const LOCAL_PORTADORES_KEY = 'lifeband_portadores';
 const LOCAL_INFO_MEDICA_KEY = 'lifeband_info_medica';
 const LOCAL_CONTACTOS_EMERGENCIA_KEY = 'lifeband_contactos_emergencia';
 
+// In-memory fallback to avoid crashes if storage isn't available.
 const memoryStore = new Map<string, string>();
 
+// Read from platform storage with a best-effort fallback.
 const storageGetItem = async (key: string): Promise<string | null> => {
   if (Platform.OS === 'web') {
     try {
@@ -47,6 +50,7 @@ const storageGetItem = async (key: string): Promise<string | null> => {
   }
 };
 
+// Write to platform storage with a best-effort fallback.
 const storageSetItem = async (key: string, value: string): Promise<void> => {
   memoryStore.set(key, value);
   if (Platform.OS === 'web') {
@@ -66,6 +70,7 @@ const storageSetItem = async (key: string, value: string): Promise<void> => {
   }
 };
 
+// Determine if Supabase env vars are properly configured.
 const isSupabaseConfigured = () => {
   const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
   const key = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
@@ -75,6 +80,7 @@ const isSupabaseConfigured = () => {
   return true;
 };
 
+// Helper to safely read JSON blobs from storage.
 const getLocalJson = async <T>(key: string, fallback: T): Promise<T> => {
   try {
     const raw = await storageGetItem(key);
@@ -85,14 +91,17 @@ const getLocalJson = async <T>(key: string, fallback: T): Promise<T> => {
   }
 };
 
+// Helper to safely write JSON blobs to storage.
 const setLocalJson = async (key: string, value: any) => {
   await storageSetItem(key, JSON.stringify(value));
 };
 
+// Generate a local-only id for offline mode.
 const generateLocalId = (prefix: string) => {
   return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 };
 
+// Resolve the current admin id (Supabase user or local fallback).
 export const getCurrentAdminId = async (): Promise<string> => {
   try {
     const { data } = await supabase.auth.getSession();
@@ -110,7 +119,7 @@ export const getCurrentAdminId = async (): Promise<string> => {
   return id;
 };
 
-// Admin operations
+// Admin operations (profile create/read/update).
 export const getAdminProfile = async (adminId: string): Promise<Admin | null> => {
   if (isSupabaseConfigured()) {
     const { data, error } = await supabase
@@ -127,6 +136,7 @@ export const getAdminProfile = async (adminId: string): Promise<Admin | null> =>
   return all.find((a) => a.id === adminId) || null;
 };
 
+// Create a new admin profile in Supabase or local store.
 export const createAdminProfile = async (admin: Omit<Admin, 'created_at' | 'updated_at'>) => {
   if (isSupabaseConfigured()) {
     const { data, error } = await supabase
@@ -152,6 +162,7 @@ export const createAdminProfile = async (admin: Omit<Admin, 'created_at' | 'upda
   return record;
 };
 
+// Ensure an admin profile exists (create it if missing).
 export const ensureAdminProfile = async (admin: Omit<Admin, 'created_at' | 'updated_at'>) => {
   if (isSupabaseConfigured()) {
     const existing = await getAdminProfile(admin.id);
@@ -160,6 +171,7 @@ export const ensureAdminProfile = async (admin: Omit<Admin, 'created_at' | 'upda
   return createAdminProfile(admin);
 };
 
+ // Update admin profile fields.
  export const updateAdminProfile = async (adminId: string, updates: Partial<Admin>) => {
    if (isSupabaseConfigured()) {
      const { data, error } = await supabase
@@ -187,7 +199,7 @@ export const ensureAdminProfile = async (admin: Omit<Admin, 'created_at' | 'upda
    return nextRecord;
  };
 
-// Portador operations
+// Portador operations (CRUD for managed wearers).
 export const getPortadores = async (adminId: string): Promise<Portador[]> => {
   if (isSupabaseConfigured()) {
     const { data, error } = await supabase
@@ -284,7 +296,7 @@ export const deletePortador = async (portadorId: string) => {
   await setLocalJson(LOCAL_PORTADORES_KEY, next);
 };
 
-// Info Médica operations
+// Info Médica operations (1:1 with portador).
 export const getInfoMedica = async (portadorId: string): Promise<InfoMedica | null> => {
   if (isSupabaseConfigured()) {
     const { data, error } = await supabase
@@ -330,7 +342,7 @@ export const createOrUpdateInfoMedica = async (infoMedica: Omit<InfoMedica, 'id'
   return nextRecord;
 };
 
-// Contactos de Emergencia operations
+// Contactos de Emergencia operations (1:N with portador).
 export const getContactosEmergencia = async (portadorId: string): Promise<ContactoEmergencia[]> => {
   if (isSupabaseConfigured()) {
     const { data, error } = await supabase
@@ -411,7 +423,7 @@ export const deleteContactoEmergencia = async (contactoId: string) => {
   await setLocalJson(LOCAL_CONTACTOS_EMERGENCIA_KEY, next);
 };
 
-// PDF generation trigger
+// PDF generation trigger (Edge Function).
 export const triggerPdfGeneration = async (portadorId: string) => {
   const { data, error } = await supabase.functions.invoke('generate-pdf', {
     body: { portadorId },
@@ -421,7 +433,7 @@ export const triggerPdfGeneration = async (portadorId: string) => {
   return data;
 };
 
-// Alergias operations
+// Alergias operations (1:N with info_medica).
 export const getAlergias = async (infoMedicaId: string): Promise<Alergia[]> => {
   const { data, error } = await supabase
     .from('alergias')
@@ -465,7 +477,7 @@ export const deleteAlergia = async (alergiaId: string) => {
   if (error) throw error;
 };
 
-// Condiciones Médicas operations
+// Condiciones Médicas operations (1:N with info_medica).
 export const getCondicionesMedicas = async (infoMedicaId: string): Promise<CondicionMedica[]> => {
   const { data, error } = await supabase
     .from('condiciones_medicas')
@@ -509,7 +521,7 @@ export const deleteCondicionMedica = async (condicionId: string) => {
   if (error) throw error;
 };
 
-// Medicamentos Permanentes operations
+// Medicamentos Permanentes operations (1:N with info_medica).
 export const getMedicamentosPermanentes = async (infoMedicaId: string): Promise<MedicamentoPermanente[]> => {
   const { data, error } = await supabase
     .from('medicamentos_permanentes')
@@ -553,7 +565,7 @@ export const deleteMedicamentoPermanente = async (medicamentoId: string) => {
   if (error) throw error;
 };
 
-// Historial Quirúrgico operations
+// Historial Quirúrgico operations (1:N with info_medica).
 export const getHistorialQuirurgico = async (infoMedicaId: string): Promise<HistorialQuirurgico[]> => {
   const { data, error } = await supabase
     .from('historial_quirurgico')
@@ -597,7 +609,7 @@ export const deleteHistorialQuirurgico = async (historialId: string) => {
   if (error) throw error;
 };
 
-// Contacto Médico operations
+// Contacto Médico operations (1:N with info_medica).
 export const getContactosMedicos = async (infoMedicaId: string): Promise<ContactoMedico[]> => {
   const { data, error } = await supabase
     .from('contactos_medicos')
@@ -641,7 +653,7 @@ export const deleteContactoMedico = async (contactoId: string) => {
   if (error) throw error;
 };
 
-// Antecedentes Médicos operations
+// Antecedentes Médicos operations (1:N with info_medica).
 export const getAntecedentesMedicos = async (infoMedicaId: string): Promise<AntecedentesMedicos[]> => {
   const { data, error } = await supabase
     .from('antecedentes_medicos')
@@ -685,7 +697,7 @@ export const deleteAntecedenteMedico = async (antecedenteId: string) => {
   if (error) throw error;
 };
 
-// Dispositivos Implantados operations
+// Dispositivos Implantados operations (1:N with info_medica).
 export const getDispositivosImplantados = async (infoMedicaId: string): Promise<DispositivosImplantados[]> => {
   const { data, error } = await supabase
     .from('dispositivos_implantados')
@@ -729,7 +741,7 @@ export const deleteDispositivoImplantado = async (dispositivoId: string) => {
   if (error) throw error;
 };
 
-// Condiciones Psicológicas operations
+// Condiciones Psicológicas operations (1:N with info_medica).
 export const getCondicionesPsicologicas = async (infoMedicaId: string): Promise<CondicionPsicologica[]> => {
   const { data, error } = await supabase
     .from('condiciones_psicologicas')
@@ -773,7 +785,7 @@ export const deleteCondicionPsicologica = async (condicionId: string) => {
   if (error) throw error;
 };
 
-// Crisis y Sensibilidades operations
+// Crisis y Sensibilidades operations (1:N with info_medica).
 export const getCrisisSensibilidades = async (infoMedicaId: string): Promise<CrisisSensibilidad[]> => {
   const { data, error } = await supabase
     .from('crisis_sensibilidades')
@@ -817,7 +829,7 @@ export const deleteCrisisSensibilidad = async (crisisId: string) => {
   if (error) throw error;
 };
 
-// Apoyo Emocional operations
+// Apoyo Emocional operations (1:N with info_medica).
 export const getApoyoEmocional = async (infoMedicaId: string): Promise<ApoyoEmocional[]> => {
   const { data, error } = await supabase
     .from('apoyo_emocional')
