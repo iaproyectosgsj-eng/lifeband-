@@ -6,13 +6,14 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
+  SafeAreaView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Colors, Spacing, Typography, BorderRadius } from '../../constants';
-import { Portador, SubscriptionPortador, AppStackParamList } from '../../types';
+import { Portador, AppStackParamList } from '../../types';
 import { getPortadores, getCurrentAdminId } from '../../services';
-import { Button, Card } from '../../components/common';
+import { Button } from '../../components/common';
 
 type DashboardNavigationProp = NativeStackNavigationProp<AppStackParamList, 'Dashboard'>;
 
@@ -95,9 +96,12 @@ const DashboardScreen: React.FC = () => {
 
   const renderHeader = () => (
     <View style={styles.header}>
-      <Text style={styles.title}>Lifeband</Text>
+      <View>
+        <Text style={styles.title}>Lifeband</Text>
+        <Text style={styles.subtitle}>Gestiona a tus portadores desde un solo lugar</Text>
+      </View>
       <Button
-        title="Settings"
+        title="Ajustes"
         onPress={() => navigation.navigate('Settings')}
         variant="outline"
         size="small"
@@ -106,14 +110,20 @@ const DashboardScreen: React.FC = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {renderHeader()}
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => navigation.navigate('AddPortadorWizard')}
-      >
-        <Text style={styles.addButtonText}>+ Agregar Portador</Text>
-      </TouchableOpacity>
+      <View style={styles.ctaCard}>
+        <Text style={styles.ctaTitle}>Añade un portador</Text>
+        <Text style={styles.ctaSubtitle}>
+          Completa los datos médicos críticos para su pulsera.
+        </Text>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => navigation.navigate('AddPortadorWizard')}
+        >
+          <Text style={styles.addButtonText}>+ Agregar Portador</Text>
+        </TouchableOpacity>
+      </View>
 
       {loading ? (
         <Text style={styles.loadingText}>Cargando...</Text>
@@ -139,7 +149,7 @@ const DashboardScreen: React.FC = () => {
           showsVerticalScrollIndicator={false}
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -150,13 +160,33 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: Spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    gap: Spacing.md,
   },
   title: {
     ...Typography.title,
     color: Colors.text,
-    marginBottom: Spacing.md,
+  },
+  subtitle: {
+    ...Typography.body,
+    color: Colors.textSecondary,
+  },
+  ctaCard: {
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.lg,
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.xl,
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    gap: Spacing.sm,
+  },
+  ctaTitle: {
+    ...Typography.subheading,
+    color: Colors.text,
+  },
+  ctaSubtitle: {
+    ...Typography.body,
+    color: Colors.textSecondary,
   },
   addButton: {
     backgroundColor: Colors.primary,
@@ -171,7 +201,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   list: {
-    padding: Spacing.md,
+    padding: Spacing.lg,
   },
   card: {
     backgroundColor: Colors.card,

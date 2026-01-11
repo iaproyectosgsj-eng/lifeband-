@@ -127,6 +127,39 @@ export const getAdminProfile = async (adminId: string): Promise<Admin | null> =>
   return all.find((a) => a.id === adminId) || null;
 };
 
+export const createAdminProfile = async (admin: Omit<Admin, 'created_at' | 'updated_at'>) => {
+  if (isSupabaseConfigured()) {
+    const { data, error } = await supabase
+      .from('admins')
+      .insert(admin)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  const all = await getLocalJson<Admin[]>(LOCAL_ADMINS_KEY, []);
+  const now = new Date().toISOString();
+  const record: Admin = {
+    ...admin,
+    created_at: now,
+    updated_at: now,
+  } as Admin;
+
+  const next = [record, ...all];
+  await setLocalJson(LOCAL_ADMINS_KEY, next);
+  return record;
+};
+
+export const ensureAdminProfile = async (admin: Omit<Admin, 'created_at' | 'updated_at'>) => {
+  if (isSupabaseConfigured()) {
+    const existing = await getAdminProfile(admin.id);
+    if (existing) return existing;
+  }
+  return createAdminProfile(admin);
+};
+
  export const updateAdminProfile = async (adminId: string, updates: Partial<Admin>) => {
    if (isSupabaseConfigured()) {
      const { data, error } = await supabase

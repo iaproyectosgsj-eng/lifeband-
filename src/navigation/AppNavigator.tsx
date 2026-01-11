@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { supabase } from '../services/supabase';
+import { ensureAdminProfile } from '../services/database';
 import { Admin, AuthState } from '../types';
 import AuthStack from './AuthStack';
 import AppStack from './AppStack';
@@ -24,13 +25,19 @@ const AppNavigator: React.FC = () => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
-        // Fetch admin profile
-        const { data: admin } = await supabase
-          .from('admins')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
-        
+        const { user } = session;
+        const metadata = user.user_metadata || {};
+        const admin = await ensureAdminProfile({
+          id: user.id,
+          first_name: metadata.first_name || metadata.name || 'Admin',
+          last_name: metadata.last_name || metadata.family_name || '',
+          email: user.email ?? '',
+          password_hash: 'supabase_auth',
+          status: 'active',
+          country: metadata.country || 'Desconocido',
+          language: metadata.language || 'Español',
+        });
+
         setAuthState({
           user: admin,
           session,
@@ -50,12 +57,19 @@ const AppNavigator: React.FC = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (session?.user) {
-          const { data: admin } = await supabase
-            .from('admins')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
-          
+          const { user } = session;
+          const metadata = user.user_metadata || {};
+          const admin = await ensureAdminProfile({
+            id: user.id,
+            first_name: metadata.first_name || metadata.name || 'Admin',
+            last_name: metadata.last_name || metadata.family_name || '',
+            email: user.email ?? '',
+            password_hash: 'supabase_auth',
+            status: 'active',
+            country: metadata.country || 'Desconocido',
+            language: metadata.language || 'Español',
+          });
+
           setAuthState({
             user: admin,
             session,
