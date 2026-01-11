@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Alert,
   Share,
+  SafeAreaView,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -108,91 +109,102 @@ const PortadorDetailScreen: React.FC = () => {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <Text style={styles.loadingText}>Cargando...</Text>
-      </View>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>Cargando...</Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
   if (!portador) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>No se encontró el portador</Text>
-      </View>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>No se encontró el portador</Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <View style={styles.header}>
-        <View style={styles.statusRow}>
-          <Text style={styles.name}>
-            {portador.first_name} {portador.last_name}
-          </Text>
-          <View style={[styles.statusBadge, { backgroundColor: getStatusColor(portador.lifeband_status) }]}>
-            <Text style={styles.statusText}>{getStatusText(portador.lifeband_status)}</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <View style={styles.headerCard}>
+          <View style={styles.statusRow}>
+            <Text style={styles.name}>
+              {portador.first_name} {portador.last_name}
+            </Text>
+            <View style={[styles.statusBadge, { backgroundColor: getStatusColor(portador.lifeband_status) }]}>
+              <Text style={styles.statusText}>{getStatusText(portador.lifeband_status)}</Text>
+            </View>
           </View>
+          <Text style={styles.info}>
+            {portador.birth_date} • {portador.nationality}
+          </Text>
         </View>
-        <Text style={styles.info}>
-          {portador.birth_date} • {portador.nationality}
-        </Text>
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Información de Acceso</Text>
-        <View style={styles.infoCard}>
-          <Text style={styles.infoLabel}>Token QR:</Text>
-          <Text style={styles.infoValue}>{portador.qr_token}</Text>
-        </View>
-        {portador.nfc_uid && (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Información de acceso</Text>
           <View style={styles.infoCard}>
-            <Text style={styles.infoLabel}>UID NFC:</Text>
-            <Text style={styles.infoValue}>{portador.nfc_uid}</Text>
+            <Text style={styles.infoLabel}>Token QR</Text>
+            <Text style={styles.infoValue}>{portador.qr_token}</Text>
           </View>
-        )}
-        <View style={styles.infoCard}>
-          <Text style={styles.infoLabel}>Acceso Público:</Text>
-          <Text style={styles.infoValue}>
-            {portador.public_access_enabled ? 'Habilitado' : 'Deshabilitado'}
-          </Text>
+          {portador.nfc_uid && (
+            <View style={styles.infoCard}>
+              <Text style={styles.infoLabel}>UID NFC</Text>
+              <Text style={styles.infoValue}>{portador.nfc_uid}</Text>
+            </View>
+          )}
+          <View style={styles.infoCard}>
+            <Text style={styles.infoLabel}>Acceso público</Text>
+            <Text style={styles.infoValue}>
+              {portador.public_access_enabled ? 'Habilitado' : 'Deshabilitado'}
+            </Text>
+          </View>
         </View>
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Acciones Rápidas</Text>
-        
-        <TouchableOpacity style={styles.actionButton} onPress={handleViewPDF}>
-          <Text style={styles.actionButtonText}>Ver PDF Médico</Text>
-        </TouchableOpacity>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Acciones rápidas</Text>
+          
+          <TouchableOpacity style={styles.actionButton} onPress={handleViewPDF}>
+            <Text style={styles.actionButtonText}>Ver PDF Médico</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.actionButton} onPress={handleShareLink}>
-          <Text style={styles.actionButtonText}>Compartir Link de Emergencia</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.actionButton} onPress={handleShareLink}>
+            <Text style={styles.actionButtonText}>Compartir Link de Emergencia</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={[styles.actionButton, styles.dangerButton]} 
-          onPress={handleMarkAsLost}
-        >
-          <Text style={styles.dangerButtonText}>Marcar Pulsera como Perdida</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            style={[styles.actionButton, styles.dangerButton]}
+            onPress={handleMarkAsLost}
+          >
+            <Text style={styles.dangerButtonText}>Marcar Pulsera como Perdida</Text>
+          </TouchableOpacity>
+        </View>
 
-      <View style={styles.section}>
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => navigation.navigate('EditPortadorWizard', { portadorId })}
-        >
-          <Text style={styles.editButtonText}>Editar Información</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+        <View style={styles.section}>
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={() => navigation.navigate('EditPortadorWizard', { portadorId })}
+          >
+            <Text style={styles.editButtonText}>Editar Información</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
   container: {
     flex: 1,
     backgroundColor: Colors.background,
+    padding: Spacing.lg,
   },
   loadingContainer: {
     flex: 1,
@@ -212,10 +224,18 @@ const styles = StyleSheet.create({
     ...Typography.body,
     color: Colors.error,
   },
-  header: {
+  headerCard: {
     padding: Spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    backgroundColor: Colors.card,
+    borderRadius: BorderRadius.xl,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    marginBottom: Spacing.lg,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 4,
   },
   statusRow: {
     flexDirection: 'row',
@@ -243,18 +263,18 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
   section: {
-    padding: Spacing.lg,
+    marginBottom: Spacing.lg,
   },
   sectionTitle: {
-    ...Typography.heading,
+    ...Typography.subheading,
     color: Colors.text,
     marginBottom: Spacing.md,
   },
   infoCard: {
-    backgroundColor: Colors.card,
+    backgroundColor: Colors.surface,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.lg,
     borderWidth: 1,
     borderColor: Colors.border,
   },

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Alert,
   ScrollView,
+  SafeAreaView,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -98,146 +99,155 @@ const RegisterStep2Screen: React.FC = () => {
   };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <View style={styles.content}>
-        <Text style={styles.title}>Completa tu Registro</Text>
-        <Text style={styles.subtitle}>Email: {email}</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <View style={styles.content}>
+          <Text style={styles.title}>Completa tu registro</Text>
+          <Text style={styles.subtitle}>Email: {email}</Text>
 
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Contraseña *</Text>
-          <TextInput
-            style={styles.input}
-            value={formData.password}
-            onChangeText={(value) => updateFormData('password', value)}
-            placeholder="Mínimo 8 caracteres"
-            secureTextEntry
-            autoCapitalize="none"
-          />
-        </View>
+          <View style={styles.card}>
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>Contraseña *</Text>
+              <TextInput
+                style={styles.input}
+                value={formData.password}
+                onChangeText={(value) => updateFormData('password', value)}
+                placeholder="Mínimo 8 caracteres"
+                secureTextEntry
+                autoCapitalize="none"
+              />
+            </View>
 
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Confirmar Contraseña *</Text>
-          <TextInput
-            style={styles.input}
-            value={formData.confirmPassword}
-            onChangeText={(value) => updateFormData('confirmPassword', value)}
-            placeholder="Repite tu contraseña"
-            secureTextEntry
-            autoCapitalize="none"
-          />
-        </View>
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>Confirmar Contraseña *</Text>
+              <TextInput
+                style={styles.input}
+                value={formData.confirmPassword}
+                onChangeText={(value) => updateFormData('confirmPassword', value)}
+                placeholder="Repite tu contraseña"
+                secureTextEntry
+                autoCapitalize="none"
+              />
+            </View>
 
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>País *</Text>
-          <TextInput
-            style={styles.input}
-            value={formData.country}
-            onChangeText={(value) => updateFormData('country', value)}
-            placeholder="Tu país de residencia"
-            autoCapitalize="words"
-          />
-        </View>
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>País *</Text>
+              <TextInput
+                style={styles.input}
+                value={formData.country}
+                onChangeText={(value) => updateFormData('country', value)}
+                placeholder="Tu país de residencia"
+                autoCapitalize="words"
+              />
+            </View>
 
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Idioma Preferido</Text>
-          <View style={styles.languageGroup}>
-            {[
-              { code: 'es', name: 'Español' },
-              { code: 'en', name: 'English' },
-              { code: 'pt', name: 'Português' },
-            ].map((lang) => (
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>Idioma Preferido</Text>
+              <View style={styles.languageGroup}>
+                {[
+                  { code: 'es', name: 'Español' },
+                  { code: 'en', name: 'English' },
+                  { code: 'pt', name: 'Português' },
+                ].map((lang) => (
+                  <TouchableOpacity
+                    key={lang.code}
+                    style={[
+                      styles.languageOption,
+                      formData.language === lang.code && styles.languageOptionSelected,
+                    ]}
+                    onPress={() => updateFormData('language', lang.code)}
+                  >
+                    <Text
+                      style={[
+                        styles.languageText,
+                        formData.language === lang.code && styles.languageTextSelected,
+                      ]}
+                    >
+                      {lang.name}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            <View style={styles.termsSection}>
+              <Text style={styles.termsTitle}>Consentimientos Obligatorios</Text>
+
               <TouchableOpacity
-                key={lang.code}
-                style={[
-                  styles.languageOption,
-                  formData.language === lang.code && styles.languageOptionSelected,
-                ]}
-                onPress={() => updateFormData('language', lang.code)}
+                style={styles.checkboxRow}
+                onPress={() => updateFormData('acceptTerms', !formData.acceptTerms)}
               >
-                <Text
-                  style={[
-                    styles.languageText,
-                    formData.language === lang.code && styles.languageTextSelected,
-                  ]}
-                >
-                  {lang.name}
+                <View style={[styles.checkbox, formData.acceptTerms && styles.checkboxChecked]}>
+                  {formData.acceptTerms && <Text style={styles.checkmark}>✓</Text>}
+                </View>
+                <Text style={styles.checkboxText}>
+                  Acepto los Términos y Condiciones de Lifeband
                 </Text>
               </TouchableOpacity>
-            ))}
+
+              <TouchableOpacity
+                style={styles.checkboxRow}
+                onPress={() => updateFormData('acceptPrivacy', !formData.acceptPrivacy)}
+              >
+                <View style={[styles.checkbox, formData.acceptPrivacy && styles.checkboxChecked]}>
+                  {formData.acceptPrivacy && <Text style={styles.checkmark}>✓</Text>}
+                </View>
+                <Text style={styles.checkboxText}>
+                  Acepto la Política de Privacidad y tratamiento de datos
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.checkboxRow}
+                onPress={() => updateFormData('acceptMedicalData', !formData.acceptMedicalData)}
+              >
+                <View style={[styles.checkbox, formData.acceptMedicalData && styles.checkboxChecked]}>
+                  {formData.acceptMedicalData && <Text style={styles.checkmark}>✓</Text>}
+                </View>
+                <Text style={styles.checkboxText}>
+                  Autorizo el manejo de información médica sensible de los portadores
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity
+              style={[styles.registerButton, loading && styles.registerButtonDisabled]}
+              onPress={handleRegister}
+              disabled={loading}
+            >
+              <Text style={styles.registerButtonText}>
+                {loading ? 'Registrando...' : 'Completar Registro'}
+              </Text>
+            </TouchableOpacity>
           </View>
-        </View>
-
-        <View style={styles.termsSection}>
-          <Text style={styles.termsTitle}>Consentimientos Obligatorios</Text>
 
           <TouchableOpacity
-            style={styles.checkboxRow}
-            onPress={() => updateFormData('acceptTerms', !formData.acceptTerms)}
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
           >
-            <View style={[styles.checkbox, formData.acceptTerms && styles.checkboxChecked]}>
-              {formData.acceptTerms && <Text style={styles.checkmark}>✓</Text>}
-            </View>
-            <Text style={styles.checkboxText}>
-              Acepto los Términos y Condiciones de Lifeband
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.checkboxRow}
-            onPress={() => updateFormData('acceptPrivacy', !formData.acceptPrivacy)}
-          >
-            <View style={[styles.checkbox, formData.acceptPrivacy && styles.checkboxChecked]}>
-              {formData.acceptPrivacy && <Text style={styles.checkmark}>✓</Text>}
-            </View>
-            <Text style={styles.checkboxText}>
-              Acepto la Política de Privacidad y tratamiento de datos
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.checkboxRow}
-            onPress={() => updateFormData('acceptMedicalData', !formData.acceptMedicalData)}
-          >
-            <View style={[styles.checkbox, formData.acceptMedicalData && styles.checkboxChecked]}>
-              {formData.acceptMedicalData && <Text style={styles.checkmark}>✓</Text>}
-            </View>
-            <Text style={styles.checkboxText}>
-              Autorizo el manejo de información médica sensible de los portadores
-            </Text>
+            <Text style={styles.backButtonText}>Atrás</Text>
           </TouchableOpacity>
         </View>
-
-        <TouchableOpacity
-          style={[styles.registerButton, loading && styles.registerButtonDisabled]}
-          onPress={handleRegister}
-          disabled={loading}
-        >
-          <Text style={styles.registerButtonText}>
-            {loading ? 'Registrando...' : 'Completar Registro'}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.backButtonText}>Atrás</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
   container: {
     flex: 1,
     backgroundColor: Colors.background,
   },
   content: {
     padding: Spacing.lg,
+    paddingBottom: Spacing.xxl,
   },
   title: {
-    ...Typography.title,
+    ...Typography.heading,
     color: Colors.text,
     marginBottom: Spacing.sm,
   },
@@ -245,6 +255,18 @@ const styles = StyleSheet.create({
     ...Typography.body,
     color: Colors.textSecondary,
     marginBottom: Spacing.xl,
+  },
+  card: {
+    backgroundColor: Colors.card,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 4,
   },
   formGroup: {
     marginBottom: Spacing.lg,
@@ -346,6 +368,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     alignItems: 'center',
+    marginTop: Spacing.lg,
   },
   backButtonText: {
     ...Typography.body,
