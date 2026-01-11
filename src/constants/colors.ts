@@ -1,40 +1,33 @@
 export const Colors = {
-  // Primary palette - Teal and Blue
-  primary: '#14B8A6', // Teal-500
-  primaryDark: '#0F766E', // Teal-700
-  primaryLight: '#5EEAD4', // Teal-300
-  
-  secondary: '#0EA5E9', // Sky-500
-  secondaryDark: '#0369A1', // Sky-700
-  secondaryLight: '#7DD3FC', // Sky-300
-  
-  // Neutral colors
-  background: '#FFFFFF',
-  surface: '#F8FAFC', // Slate-50
+  teal: '#0F766E',
+  blue: '#2563EB',
+  bg: '#F8FAFC',
+  surface: '#FFFFFF',
+  text: '#0F172A',
+  muted: '#64748B',
+  border: '#E2E8F0',
+  error: '#DC2626',
+  errorBorder: '#FCA5A5',
+  primary: '#0F766E',
+  primaryDark: '#0F766E',
+  primaryLight: '#5EEAD4',
+  secondary: '#2563EB',
+  secondaryDark: '#1D4ED8',
+  secondaryLight: '#93C5FD',
+  background: '#F8FAFC',
   card: '#FFFFFF',
-  
-  text: '#1E293B', // Slate-800
-  textSecondary: '#64748B', // Slate-500
-  textLight: '#94A3B8', // Slate-400
-  
-  border: '#E2E8F0', // Slate-200
-  divider: '#F1F5F9', // Slate-100
-  
-  // Status colors
-  success: '#10B981', // Emerald-500
-  warning: '#F59E0B', // Amber-500
-  error: '#EF4444', // Red-500
-  info: '#3B82F6', // Blue-500
-  
-  // Special colors
-  critical: '#DC2626', // Red-600 - for critical medical alerts
-  active: '#10B981', // Emerald-500
-  suspended: '#F59E0B', // Amber-500
-  lost: '#EF4444', // Red-500
-  
-  // Overlay
-  overlay: 'rgba(0, 0, 0, 0.5)',
-  shadow: 'rgba(0, 0, 0, 0.1)',
+  textSecondary: '#64748B',
+  textLight: '#94A3B8',
+  divider: '#E2E8F0',
+  success: '#10B981',
+  warning: '#F59E0B',
+  info: '#3B82F6',
+  critical: '#DC2626',
+  active: '#10B981',
+  suspended: '#F59E0B',
+  lost: '#DC2626',
+  overlay: 'rgba(15, 23, 42, 0.25)',
+  shadow: 'rgba(15, 23, 42, 0.08)',
 };
 
 export const Spacing = {
@@ -48,13 +41,13 @@ export const Spacing = {
 
 export const Typography = {
   title: {
-    fontSize: 28,
-    fontWeight: 'bold' as const,
-    lineHeight: 36,
+    fontSize: 30,
+    fontWeight: '700' as const,
+    lineHeight: 38,
   },
   heading: {
     fontSize: 24,
-    fontWeight: 'bold' as const,
+    fontWeight: '700' as const,
     lineHeight: 32,
   },
   subheading: {
@@ -64,25 +57,25 @@ export const Typography = {
   },
   body: {
     fontSize: 16,
-    fontWeight: 'normal' as const,
+    fontWeight: '400' as const,
     lineHeight: 24,
   },
   caption: {
     fontSize: 14,
-    fontWeight: 'normal' as const,
+    fontWeight: '400' as const,
     lineHeight: 20,
   },
   small: {
     fontSize: 12,
-    fontWeight: 'normal' as const,
+    fontWeight: '400' as const,
     lineHeight: 16,
   },
 };
 
 export const BorderRadius = {
-  sm: 4,
-  md: 8,
-  lg: 12,
-  xl: 16,
+  sm: 12,
+  md: 20,
+  lg: 24,
+  xl: 28,
   full: 9999,
 };

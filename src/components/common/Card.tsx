@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ViewStyle,
-} from 'react-native';
+import { View, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 import { Colors, Spacing, Typography, BorderRadius } from '../../constants';
 
 interface CardProps {
@@ -25,8 +19,8 @@ const Card: React.FC<CardProps> = ({
 }) => {
   const getCardStyle = (): ViewStyle => {
     const baseStyle: ViewStyle = {
-      backgroundColor: Colors.card,
-      borderRadius: BorderRadius.lg,
+      backgroundColor: Colors.surface,
+      borderRadius: BorderRadius.xl,
       borderWidth: 1,
       borderColor: Colors.border,
     };
@@ -46,10 +40,10 @@ const Card: React.FC<CardProps> = ({
     // Shadow
     if (shadow) {
       baseStyle.shadowColor = Colors.shadow;
-      baseStyle.shadowOffset = { width: 0, height: 2 };
-      baseStyle.shadowOpacity = 0.1;
-      baseStyle.shadowRadius = 4;
-      baseStyle.elevation = 3;
+      baseStyle.shadowOffset = { width: 0, height: 8 };
+      baseStyle.shadowOpacity = 0.08;
+      baseStyle.shadowRadius = 16;
+      baseStyle.elevation = 2;
     }
 
     return baseStyle;

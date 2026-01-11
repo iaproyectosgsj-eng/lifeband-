@@ -1,20 +1,28 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  SafeAreaView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Colors, Spacing, Typography, BorderRadius } from '../../constants';
 import { AuthStackParamList } from '../../types';
-import { Button, Input } from '../../components/common';
+import {
+  Card,
+  Divider,
+  FieldInput,
+  PrimaryButton,
+  SecondaryButton,
+  Toast,
+  TopGradientHeader,
+} from '../../components/common';
+import { Feather } from '@expo/vector-icons';
 
 type RegisterStep1NavigationProp = NativeStackNavigationProp<AuthStackParamList, 'RegisterStep1'>;
 
@@ -22,29 +30,48 @@ const RegisterStep1Screen: React.FC = () => {
   const navigation = useNavigation<RegisterStep1NavigationProp>();
   const [formData, setFormData] = useState({
     email: '',
-    firstName: '',
-    lastName: '',
+    fullName: '',
+    password: '',
   });
+  const [errors, setErrors] = useState<{ email?: string; fullName?: string; password?: string }>({});
+  const [toastMessage, setToastMessage] = useState('');
+
+  const hasToast = useMemo(() => toastMessage.length > 0, [toastMessage]);
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setTimeout(() => setToastMessage(''), 2500);
+  };
 
   const updateFormData = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleContinue = () => {
-    if (!formData.email || !formData.firstName || !formData.lastName) {
-      Alert.alert('Error', 'Por favor completa todos los campos');
-      return;
-    }
-
-    // Validar email básico
+    const nextErrors: { email?: string; fullName?: string; password?: string } = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      Alert.alert('Error', 'Por favor ingresa un email válido');
+    if (!formData.fullName) {
+      nextErrors.fullName = 'Ingresa tu nombre completo.';
+    }
+    if (!formData.email || !emailRegex.test(formData.email)) {
+      nextErrors.email = 'Ingresa un email válido.';
+    }
+    if (!formData.password || formData.password.length < 8) {
+      nextErrors.password = 'La contraseña debe tener al menos 8 caracteres.';
+    }
+
+    setErrors(nextErrors);
+
+    if (Object.keys(nextErrors).length > 0) {
+      showToast('Revisa los datos para continuar.');
       return;
     }
 
-    // Navegar a RegisterStep2 con el email
-    navigation.navigate('RegisterStep2', { email: formData.email });
+    navigation.navigate('RegisterStep2', {
+      email: formData.email,
+      password: formData.password,
+      fullName: formData.fullName,
+    });
   };
 
   return (
@@ -58,52 +85,78 @@ const RegisterStep1Screen: React.FC = () => {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.header}>
-            <Text style={styles.title}>Crear cuenta</Text>
-            <Text style={styles.subtitle}>Paso 1 de 2 • Información básica</Text>
-          </View>
+          <TopGradientHeader
+            title="Crear cuenta"
+            subtitle="Administra a tu familia con seguridad y calma."
+          />
 
-          <View style={styles.card}>
-            <Input
-              label="Nombre"
-              value={formData.firstName}
-              onChangeText={(value) => updateFormData('firstName', value)}
-              placeholder="Tu nombre"
+          <SecondaryButton
+            title="Continuar con Google"
+            onPress={() => showToast('Google estará disponible pronto.')}
+          />
+
+          <Divider label="o" />
+
+          <Card style={styles.card}>
+            <FieldInput
+              label="Nombre y apellido"
+              iconName="user"
+              value={formData.fullName}
+              onChangeText={(value) => updateFormData('fullName', value)}
+              placeholder="Tu nombre completo"
               autoCapitalize="words"
+              error={errors.fullName}
             />
 
-            <Input
-              label="Apellido"
-              value={formData.lastName}
-              onChangeText={(value) => updateFormData('lastName', value)}
-              placeholder="Tu apellido"
-              autoCapitalize="words"
-            />
-
-            <Input
+            <FieldInput
               label="Email"
+              iconName="mail"
               value={formData.email}
               onChangeText={(value) => updateFormData('email', value)}
               placeholder="tu@email.com"
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
+              error={errors.email}
             />
 
-            <Button
-              title="Continuar"
-              onPress={handleContinue}
-              style={styles.continueButton}
+            <FieldInput
+              label="Contraseña"
+              iconName="lock"
+              value={formData.password}
+              onChangeText={(value) => updateFormData('password', value)}
+              placeholder="Mínimo 8 caracteres"
+              secureTextEntry
+              showToggle
+              error={errors.password}
             />
-          </View>
 
-          <View style={styles.footer}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Text style={styles.backText}>← Volver al Login</Text>
-            </TouchableOpacity>
-          </View>
+            <Card style={styles.passwordCard} shadow={false}>
+              <Text style={styles.passwordTitle}>Fortaleza de contraseña</Text>
+              {[
+                'Mínimo 8 caracteres',
+                'Incluye números o símbolos',
+                'Usa mayúsculas y minúsculas',
+              ].map((item, index) => (
+                <View style={styles.passwordItem} key={`${item}-${index}`}>
+                  <Feather name="check-circle" size={16} color={Colors.muted} />
+                  <Text style={styles.passwordText}>{item}</Text>
+                </View>
+              ))}
+            </Card>
+
+            <PrimaryButton title="Continuar" onPress={handleContinue} />
+          </Card>
+
+          <TouchableOpacity
+            style={styles.footer}
+            onPress={() => navigation.navigate('Login')}
+          >
+            <Text style={styles.footerText}>Iniciar sesión</Text>
+          </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
+      <Toast message={toastMessage} visible={hasToast} />
     </SafeAreaView>
   );
 };
@@ -111,11 +164,11 @@ const RegisterStep1Screen: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.bg,
   },
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.bg,
   },
   scrollView: {
     flex: 1,
@@ -124,41 +177,38 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: Spacing.lg,
     paddingBottom: Spacing.xxl,
-  },
-  header: {
-    marginTop: Spacing.lg,
-    marginBottom: Spacing.xl,
-    gap: Spacing.xs,
-  },
-  title: {
-    ...Typography.heading,
-    color: Colors.text,
-  },
-  subtitle: {
-    ...Typography.body,
-    color: Colors.textSecondary,
+    gap: Spacing.lg,
   },
   card: {
-    backgroundColor: Colors.card,
-    borderRadius: BorderRadius.xl,
-    padding: Spacing.lg,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 4,
+    gap: Spacing.md,
   },
-  continueButton: {
-    marginBottom: Spacing.lg,
+  passwordCard: {
+    backgroundColor: Colors.bg,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.md,
+    gap: Spacing.sm,
+  },
+  passwordTitle: {
+    ...Typography.caption,
+    color: Colors.text,
+    fontWeight: '600',
+  },
+  passwordItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  passwordText: {
+    ...Typography.caption,
+    color: Colors.muted,
   },
   footer: {
     alignItems: 'center',
+    paddingVertical: Spacing.sm,
   },
-  backText: {
+  footerText: {
     ...Typography.body,
-    color: Colors.primary,
+    color: Colors.teal,
     fontWeight: '600',
   },
 });

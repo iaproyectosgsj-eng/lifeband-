@@ -1,21 +1,30 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  SafeAreaView,
+  Switch,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Colors, Spacing, Typography, BorderRadius } from '../../constants';
 import { AuthStackParamList } from '../../types';
 import { signIn, signInWithGoogle } from '../../services';
-import { Button, Input } from '../../components/common';
+import {
+  Card,
+  Divider,
+  FieldInput,
+  PrimaryButton,
+  SecondaryButton,
+  Toast,
+  TopGradientHeader,
+} from '../../components/common';
+import { Feather } from '@expo/vector-icons';
 
 type LoginNavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Login'>;
 
@@ -26,10 +35,33 @@ const LoginScreen: React.FC = () => {
     password: '',
   });
   const [loading, setLoading] = useState(false);
+  const [remember, setRemember] = useState(true);
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [toastMessage, setToastMessage] = useState('');
+
+  const hasToast = useMemo(() => toastMessage.length > 0, [toastMessage]);
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setTimeout(() => setToastMessage(''), 2500);
+  };
 
   const handleLogin = async () => {
-    if (!formData.email || !formData.password) {
-      Alert.alert('Error', 'Por favor completa todos los campos');
+    const nextErrors: { email?: string; password?: string } = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!formData.email || !emailRegex.test(formData.email)) {
+      nextErrors.email = 'Ingresa un email válido.';
+    }
+
+    if (!formData.password || formData.password.length < 8) {
+      nextErrors.password = 'La contraseña debe tener al menos 8 caracteres.';
+    }
+
+    setErrors(nextErrors);
+
+    if (Object.keys(nextErrors).length > 0) {
+      showToast('Revisa los datos para continuar.');
       return;
     }
 
@@ -37,11 +69,11 @@ const LoginScreen: React.FC = () => {
     try {
       const { error } = await signIn(formData.email, formData.password);
       if (error) {
-        Alert.alert('Error', error.message);
+        showToast(error.message);
       }
       // Navigation will be handled by AppNavigator auth state change
     } catch (error) {
-      Alert.alert('Error', 'No se pudo iniciar sesión');
+      showToast('No se pudo iniciar sesión');
     } finally {
       setLoading(false);
     }
@@ -52,11 +84,11 @@ const LoginScreen: React.FC = () => {
     try {
       const { error } = await signInWithGoogle();
       if (error) {
-        Alert.alert('Error', error.message);
+        showToast(error.message);
       }
       // Navigation will be handled by AppNavigator auth state change
     } catch (error) {
-      Alert.alert('Error', 'No se pudo iniciar sesión con Google');
+      showToast('No se pudo iniciar sesión con Google');
     } finally {
       setLoading(false);
     }
@@ -77,67 +109,90 @@ const LoginScreen: React.FC = () => {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.hero}>
-            <Text style={styles.title}>Bienvenido a Lifeband</Text>
-            <Text style={styles.subtitle}>
-              Administra pulseras médicas con información crítica siempre disponible.
-            </Text>
-          </View>
+          <TopGradientHeader
+            title="Inicia sesión"
+            subtitle="Tu info médica, lista cuando más importa."
+          />
 
-          <View style={styles.card}>
-            <Input
+          <Card style={styles.card}>
+            <FieldInput
               label="Email"
+              iconName="mail"
               value={formData.email}
               onChangeText={(value) => updateFormData('email', value)}
               placeholder="tu@email.com"
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
+              error={errors.email}
             />
 
-            <Input
+            <FieldInput
               label="Contraseña"
+              iconName="lock"
               value={formData.password}
               onChangeText={(value) => updateFormData('password', value)}
               placeholder="Tu contraseña"
               secureTextEntry
+              showToggle
+              error={errors.password}
+            />
+
+            <View style={styles.rememberRow}>
+              <View style={styles.rememberText}>
+                <Text style={styles.rememberTitle}>Recordarme</Text>
+                <Text style={styles.rememberSubtitle}>Mantener sesión activa</Text>
+              </View>
+              <Switch
+                value={remember}
+                onValueChange={setRemember}
+                trackColor={{ true: Colors.teal, false: Colors.border }}
+                thumbColor={Colors.surface}
+              />
+            </View>
+
+            <PrimaryButton
+              title={loading ? 'Entrando...' : 'Entrar'}
+              onPress={handleLogin}
+              disabled={loading}
+              style={styles.primaryButton}
+            />
+
+            <Divider label="o" />
+
+            <SecondaryButton
+              title="Continuar con Google"
+              onPress={handleGoogleLogin}
+              disabled={loading}
+              style={styles.secondaryButton}
+            />
+            <SecondaryButton
+              title="Continuar con Apple"
+              onPress={() => showToast('Apple estará disponible pronto.')}
+              disabled={loading}
             />
 
             <TouchableOpacity
-              style={styles.forgotPassword}
-              onPress={() => Alert.alert('Funcionalidad por implementar')}
+              style={styles.linkButton}
+              onPress={() => showToast('Recuperación de contraseña en camino.')}
             >
-              <Text style={styles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
+              <Text style={styles.linkText}>¿Olvidaste tu contraseña?</Text>
             </TouchableOpacity>
-
-            <Button
-              title="Iniciar Sesión"
-              onPress={handleLogin}
-              loading={loading}
-              style={styles.loginButton}
-            />
-
-            <View style={styles.divider}>
-              <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>O</Text>
-              <View style={styles.dividerLine} />
-            </View>
-
-            <Button
-              title="Continuar con Google"
-              onPress={handleGoogleLogin}
-              variant="outline"
-              style={styles.googleButton}
-            />
-          </View>
+          </Card>
 
           <View style={styles.footer}>
-            <Text style={styles.footerText}>¿No tienes cuenta?</Text>
             <TouchableOpacity onPress={() => navigation.navigate('RegisterStep1')}>
-              <Text style={styles.signUpText}>Regístrate</Text>
+              <Text style={styles.footerLink}>Crear cuenta</Text>
             </TouchableOpacity>
+            <View style={styles.securityRow}>
+              <View style={styles.securityIcon}>
+                <Feather name="shield" size={14} color={Colors.teal} />
+              </View>
+              <Text style={styles.securityText}>Datos protegidos y cifrados</Text>
+            </View>
           </View>
         </ScrollView>
+        <Toast message={toastMessage} visible={hasToast} />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -146,11 +201,11 @@ const LoginScreen: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.bg,
   },
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.bg,
   },
   scrollView: {
     flex: 1,
@@ -159,76 +214,69 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: Spacing.lg,
     paddingBottom: Spacing.xxl,
-  },
-  hero: {
-    marginTop: Spacing.lg,
-    marginBottom: Spacing.xl,
-    gap: Spacing.sm,
-  },
-  title: {
-    ...Typography.heading,
-    color: Colors.text,
-  },
-  subtitle: {
-    ...Typography.body,
-    color: Colors.textSecondary,
+    gap: Spacing.lg,
   },
   card: {
-    backgroundColor: Colors.card,
-    borderRadius: BorderRadius.xl,
-    padding: Spacing.lg,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 4,
+    gap: Spacing.md,
   },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    marginBottom: Spacing.lg,
-  },
-  forgotPasswordText: {
-    ...Typography.caption,
-    color: Colors.primary,
-  },
-  loginButton: {
-    marginBottom: Spacing.md,
-  },
-  divider: {
+  rememberRow: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: Spacing.lg,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: Colors.border,
-  },
-  dividerText: {
-    ...Typography.caption,
-    color: Colors.textSecondary,
-    marginHorizontal: Spacing.md,
-  },
-  googleButton: {
     marginBottom: Spacing.md,
+  },
+  rememberText: {
+    gap: 2,
+  },
+  rememberTitle: {
+    ...Typography.body,
+    color: Colors.text,
+    fontWeight: '600',
+  },
+  rememberSubtitle: {
+    ...Typography.small,
+    color: Colors.muted,
+  },
+  primaryButton: {
+    marginTop: Spacing.xs,
+  },
+  secondaryButton: {
+    marginBottom: Spacing.sm,
+  },
+  linkButton: {
+    alignSelf: 'center',
+    marginTop: Spacing.sm,
+  },
+  linkText: {
+    ...Typography.caption,
+    color: Colors.teal,
+    fontWeight: '600',
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: Spacing.xl,
-    gap: Spacing.xs,
+    gap: Spacing.md,
   },
-  footerText: {
+  footerLink: {
     ...Typography.body,
-    color: Colors.textSecondary,
-  },
-  signUpText: {
-    ...Typography.body,
-    color: Colors.primary,
+    color: Colors.teal,
     fontWeight: '600',
+  },
+  securityRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  securityIcon: {
+    width: 28,
+    height: 28,
+    borderRadius: BorderRadius.full,
+    backgroundColor: 'rgba(15, 118, 110, 0.12)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  securityText: {
+    ...Typography.caption,
+    color: Colors.muted,
   },
 });
 

@@ -1,12 +1,13 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AppStackParamList } from '../types';
-import DashboardScreen from '../screens/app/DashboardScreen';
+import EmptyDashboardScreen from '../screens/app/EmptyDashboardScreen';
 import PortadorDetailScreen from '../screens/app/PortadorDetailScreen';
 import AddPortadorWizardScreen from '../screens/app/AddPortadorWizardScreen';
 import EditPortadorWizardScreen from '../screens/app/EditPortadorWizardScreen';
 import SubscriptionScreen from '../screens/app/SubscriptionScreen';
 import SettingsScreen from '../screens/app/SettingsScreen';
+import { Colors } from '../constants';
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
@@ -17,12 +18,12 @@ const AppStack = () => {
       screenOptions={{
         headerShown: true,
         contentStyle: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: Colors.bg,
         },
         headerStyle: {
-          backgroundColor: '#14B8A6',
+          backgroundColor: Colors.teal,
         },
-        headerTintColor: '#FFFFFF',
+        headerTintColor: Colors.surface,
         headerTitleStyle: {
           fontWeight: 'bold',
         },
@@ -30,8 +31,8 @@ const AppStack = () => {
     >
       <Stack.Screen 
         name="Dashboard" 
-        component={DashboardScreen}
-        options={{ title: 'Mis Portadores' }}
+        component={EmptyDashboardScreen}
+        options={{ headerShown: false }}
       />
       <Stack.Screen 
         name="PortadorDetail" 
