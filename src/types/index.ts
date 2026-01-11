@@ -197,7 +197,7 @@ export interface RootStackParamList {
 export interface AuthStackParamList {
   Login: undefined;
   RegisterStep1: undefined;
-  RegisterStep2: { email: string; firstName: string; lastName: string };
+  RegisterStep2: { email: string; password: string; fullName: string };
   [key: string]: any;
 }
 
