@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  SafeAreaView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -26,6 +27,7 @@ import { Feather } from '@expo/vector-icons';
 
 type RegisterStep1NavigationProp = NativeStackNavigationProp<AuthStackParamList, 'RegisterStep1'>;
 
+// Registration step 1: capture basic identity.
 const RegisterStep1Screen: React.FC = () => {
   const navigation = useNavigation<RegisterStep1NavigationProp>();
   const [formData, setFormData] = useState({
@@ -43,10 +45,12 @@ const RegisterStep1Screen: React.FC = () => {
     setTimeout(() => setToastMessage(''), 2500);
   };
 
+  // Update local form state.
   const updateFormData = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  // Validate and move to step 2.
   const handleContinue = () => {
     const nextErrors: { email?: string; fullName?: string; password?: string } = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

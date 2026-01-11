@@ -1,3 +1,4 @@
+// List of languages used in dropdown selectors.
 export const LANGUAGES = [
   'Afrikáans',
   'Alemán',

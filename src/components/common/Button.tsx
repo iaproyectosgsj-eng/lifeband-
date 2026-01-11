@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Colors, Spacing, Typography, BorderRadius } from '../../constants';
 
+// Shared button component with variants and sizes.
 interface ButtonProps {
   title: string;
   onPress: () => void;
@@ -20,6 +21,7 @@ interface ButtonProps {
   textStyle?: TextStyle;
 }
 
+// Button handles styling by variant/size and shows a loading spinner when needed.
 const Button: React.FC<ButtonProps> = ({
   title,
   onPress,
@@ -30,6 +32,7 @@ const Button: React.FC<ButtonProps> = ({
   style,
   textStyle,
 }) => {
+  // Compute container style based on size/variant.
   const getButtonStyle = (): ViewStyle => {
     const baseStyle: ViewStyle = {
       borderRadius: BorderRadius.md,
@@ -78,6 +81,7 @@ const Button: React.FC<ButtonProps> = ({
     return baseStyle;
   };
 
+  // Compute text style based on variant.
   const getTextStyle = (): TextStyle => {
     const baseStyle: TextStyle = {
       ...Typography.body,

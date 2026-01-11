@@ -1,3 +1,4 @@
+// Color palette and shared design tokens for the UI.
 export const Colors = {
   teal: '#0F766E',
   blue: '#2563EB',
@@ -30,6 +31,7 @@ export const Colors = {
   shadow: 'rgba(15, 23, 42, 0.08)',
 };
 
+// Standard spacing scale (in dp).
 export const Spacing = {
   xs: 4,
   sm: 8,
@@ -39,6 +41,7 @@ export const Spacing = {
   xxl: 48,
 };
 
+// Typography presets for consistent text styling.
 export const Typography = {
   title: {
     fontSize: 30,
@@ -72,6 +75,7 @@ export const Typography = {
   },
 };
 
+// Border radius scale used across components.
 export const BorderRadius = {
   sm: 12,
   md: 20,

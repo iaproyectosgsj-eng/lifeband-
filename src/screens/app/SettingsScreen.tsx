@@ -26,6 +26,7 @@ const SettingsScreen: React.FC = () => {
     );
   };
 
+  // Placeholder for account deletion flow.
   const handleDeleteAccount = () => {
     Alert.alert(
       'Eliminar Cuenta',

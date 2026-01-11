@@ -58,6 +58,7 @@ interface PortadorFormData {
   }>;
 }
 
+// Multi-step wizard to create a new portador.
 const AddPortadorWizardScreen: React.FC = () => {
   const navigation = useNavigation<AddPortadorNavigationProp>();
   const [currentStep, setCurrentStep] = useState(1);
@@ -90,10 +91,12 @@ const AddPortadorWizardScreen: React.FC = () => {
     { id: 4, title: 'Psicológico', description: 'Apoyo emocional y crisis' },
   ];
 
+  // Update wizard form data.
   const updateFormData = (field: keyof PortadorFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  // Go to next step or submit.
   const nextStep = () => {
     if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
@@ -102,12 +105,14 @@ const AddPortadorWizardScreen: React.FC = () => {
     }
   };
 
+  // Return to previous step.
   const prevStep = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
   };
 
+  // Validate data and persist portador + related records.
   const handleSubmit = async () => {
     // Validate required fields
     if (!formData.first_name || !formData.last_name || !formData.birth_date) {

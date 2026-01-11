@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors, Spacing, Typography } from '../../constants';
 
+// Placeholder for subscription management.
 const SubscriptionScreen: React.FC = () => {
   return (
     <View style={styles.container}>

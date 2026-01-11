@@ -12,6 +12,8 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { Colors, Spacing, Typography, BorderRadius } from '../../constants';
+import { COUNTRIES } from '../../constants/countries';
+import { LANGUAGES } from '../../constants/languages';
 import { AuthStackParamList } from '../../types';
 import { signUp } from '../../services';
 import {
@@ -26,6 +28,7 @@ import { Feather } from '@expo/vector-icons';
 type RegisterStep2RouteProp = RouteProp<AuthStackParamList, 'RegisterStep2'>;
 type RegisterStep2NavigationProp = NativeStackNavigationProp<AuthStackParamList, 'RegisterStep2'>;
 
+// Registration step 2: credentials, country/language, consents.
 const RegisterStep2Screen: React.FC = () => {
   const route = useRoute<RegisterStep2RouteProp>();
   const navigation = useNavigation<RegisterStep2NavigationProp>();
@@ -85,6 +88,7 @@ const RegisterStep2Screen: React.FC = () => {
     }
   };
 
+  // Update local form state.
   const updateFormData = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };

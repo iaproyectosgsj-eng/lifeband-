@@ -8,6 +8,7 @@ import { Colors } from '../constants';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
+// Stack for authentication-related screens.
 const AuthStack = () => {
   return (
     <Stack.Navigator

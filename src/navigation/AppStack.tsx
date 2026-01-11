@@ -11,6 +11,7 @@ import { Colors } from '../constants';
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
+// Stack for authenticated app screens.
 const AppStack = () => {
   return (
     <Stack.Navigator

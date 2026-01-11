@@ -2,9 +2,11 @@ import { createClient } from '@supabase/supabase-js';
 import * as SecureStore from 'expo-secure-store';
 import 'react-native-url-polyfill/auto';
 
+// Supabase public configuration (Expo env vars).
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://your-project.supabase.co';
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'your-anon-key';
 
+// Custom storage adapter so Supabase persists sessions on device.
 class SupabaseSecureStorage {
   async getItem(key: string): Promise<string | null> {
     try {
@@ -31,6 +33,7 @@ class SupabaseSecureStorage {
   }
 }
 
+// Supabase client instance used across the app.
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     storage: new SupabaseSecureStorage(),
@@ -40,7 +43,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   },
 });
 
-// Auth helpers
+// Auth helpers (wrapped so screens can call them directly).
 export const signUp = async (email: string, password: string, metadata: any) => {
   const { data, error } = await supabase.auth.signUp({
     email,

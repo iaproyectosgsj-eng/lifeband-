@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { Colors, Spacing, Typography, BorderRadius } from '../../constants';
 
+// Props for the searchable dropdown.
 interface SearchableDropdownProps {
   value: string;
   onChange: (value: string) => void;
@@ -19,6 +20,7 @@ interface SearchableDropdownProps {
   label?: string;
 }
 
+// Dropdown that opens a modal list for quick selection on mobile.
 const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
   value,
   onChange,
@@ -28,20 +30,23 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
 }) => {
   const [showModal, setShowModal] = useState(false);
   
-  // Sort options alphabetically
+  // Sort options alphabetically for easier browsing.
   const sortedOptions = [...options].sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
 
+  // Select an option and close the modal.
   const handleSelect = (option: string) => {
     onChange(option);
     setShowModal(false);
   };
 
+  // Open the modal.
   const handleOpen = () => {
     setShowModal(true);
   };
 
   const displayText = value || placeholder;
 
+  // Render a selectable option row.
   const renderOption = ({ item }: { item: string }) => (
     <TouchableOpacity
       style={styles.optionItem}

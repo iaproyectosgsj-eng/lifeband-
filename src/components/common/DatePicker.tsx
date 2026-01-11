@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Colors, Spacing, Typography, BorderRadius } from '../../constants';
 
+// Props for the custom date picker.
 interface DatePickerProps {
   value: string;
   onChange: (date: string) => void;
@@ -16,6 +17,7 @@ interface DatePickerProps {
   label?: string;
 }
 
+// Custom modal-based date picker for mobile.
 const DatePicker: React.FC<DatePickerProps> = ({
   value,
   onChange,
@@ -33,6 +35,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
   ];
 
+  // Compute days for the selected month.
   const getDaysInMonth = (year: number, month: number) => {
     return new Date(year, month + 1, 0).getDate();
   };
@@ -42,22 +45,26 @@ const DatePicker: React.FC<DatePickerProps> = ({
     (_, i) => i + 1
   );
 
+  // Format as YYYY-MM-DD for storage.
   const formatDate = (year: number, month: number, day: number) => {
     const monthStr = String(month + 1).padStart(2, '0');
     const dayStr = String(day).padStart(2, '0');
     return `${year}-${monthStr}-${dayStr}`;
   };
 
+  // Confirm selection and pass back to caller.
   const handleConfirm = () => {
     const formattedDate = formatDate(selectedYear, selectedMonth, selectedDay);
     onChange(formattedDate);
     setShowModal(false);
   };
 
+  // Close without changes.
   const handleCancel = () => {
     setShowModal(false);
   };
 
+  // Open modal and prefill current value.
   const handleDatePress = () => {
     if (value) {
       const [year, month, day] = value.split('-').map(Number);

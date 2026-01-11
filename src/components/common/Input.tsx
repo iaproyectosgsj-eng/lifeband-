@@ -9,12 +9,14 @@ import {
 } from 'react-native';
 import { Colors, Spacing, Typography, BorderRadius } from '../../constants';
 
+// Props for a labeled input with optional error state.
 interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
   containerStyle?: ViewStyle;
 }
 
+// Input component with label and error handling.
 const Input: React.FC<InputProps> = ({
   label,
   error,
